@@ -1,0 +1,16 @@
+[Unit]
+Description=Shaiba LED Controller + Telegram Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/shaiba-led
+ExecStart=/opt/shaiba-led/app
+Restart=always
+RestartSec=5
+
+
+[Install]
+WantedBy=multi-user.target
