@@ -20,7 +20,7 @@ func NewWS281xStrip(gpio, count, brightness int) (*WS281xStrip, error) {
 	opt.Channels[0].GpioPin = gpio
 	opt.Channels[0].LedCount = count
 	opt.Channels[0].Brightness = brightness
-	opt.Channels[0].StripType = ws2811.WS2811StripGRB
+	opt.Channels[0].StripeType = ws2811.WS2811StripGRB
 
 	dev, err := ws2811.MakeWS2811(&opt)
 	if err != nil {
@@ -49,13 +49,26 @@ func (s *WS281xStrip) Render() error {
 	return s.dev.Wait()
 }
 
-func (s *WS281xStrip) Close() error { return s.dev.Fini() }
+func (s *WS281xStrip) Close() error {
+	s.dev.Fini()
+	return nil
+}
 
 // OpenStrip: LED_SIM=1 принудительно включает симуляцию даже в pi-сборке.
 func OpenStrip(gpio, count, brightness int) (Strip, error) {
 	if os.Getenv("LED_SIM") == "1" {
 		fmt.Println("LED_SIM=1: using null strip")
-		return NewNullStrip(count), nil
+		return &hardwareNullStrip{count: count}, nil
 	}
 	return NewWS281xStrip(gpio, count, brightness)
 }
+
+// hardwareNullStrip — локальная минимальная заглушка для режима LED_SIM=1 при сборке с тегом ws281x
+type hardwareNullStrip struct {
+	count int
+}
+
+func (s *hardwareNullStrip) Count() int        { return s.count }
+func (s *hardwareNullStrip) SetPixel(i int, c RGB) {}
+func (s *hardwareNullStrip) Render() error     { return nil }
+func (s *hardwareNullStrip) Close() error      { return nil }
