@@ -1,0 +1,27 @@
+# Исполняемые файлы Go (бинарники)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/bin/
+/shaiba-led
+/app
+
+# Файлы конфигурации с секретами (токены бота, API ключи)
+*.env
+config.local.json
+config.local.yaml
+
+# IDE и ОС
+.idea/
+.vscode/
+*.swp
+*.tmp
+.DS_Store
+Thumbs.db
+# Системные папки Visual Studio
+.vs/
+
+# Локальные данные и базы
+data/
